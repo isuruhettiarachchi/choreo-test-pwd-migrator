@@ -24,7 +24,7 @@ final http:Client asgardeoHttpClient = check new (asgardeoUrl, {
 
 isolated function changePassword() returns error? {
 
-    http:Response response = check asgardeoHttpClient->/scim2/Users/\1b10d573\-ac78\-4961\-a24e\-35afb472424a.patch({
+    json payload = {
         "schemas": [
             "urn:ietf:params:scim:api:messages:2.0:PatchOp"
         ],
@@ -32,11 +32,15 @@ isolated function changePassword() returns error? {
             {
                 "op": "replace",
                 "value": {
-                    "password": "Admin123!x2"
+                    "password": "Admin123x!2"
                 }
             }
         ]
-    });
+    };
+
+    final string userId = "1b10d573-ac78-4961-a24e-35afb472424a";
+
+    http:Response response = check asgardeoHttpClient->/scim2/Users/[userId].patch(payload);
 
     if response.statusCode != http:STATUS_OK {
         json|error jsonPayload = response.getJsonPayload();
